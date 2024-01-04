@@ -2,7 +2,6 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const dns = require('dns');
-const { url } = require('inspector');
 const bodyParser = require('body-parser');
 const app = express();
 
@@ -14,7 +13,6 @@ app.use(cors());
 
 app.use('/public', express.static(`${process.cwd()}/public`));
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
 
 app.get('/', function(req, res) {
   res.sendFile(process.cwd() + '/views/index.html');
@@ -25,8 +23,12 @@ app.get('/api/hello', function(req, res) {
   res.json({ greeting: 'hello API' });
 });
 
+// regex for url validation
+const urlRegex = new RegExp(/(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/);
+
 function validateUrl(req, res, next) {
   const url = req.body.url;
+  if (url.match(urlRegex) === null) return res.status(400).json({ error: 'invalid url' });
   dns.lookup(url, (err, address, family) => {
     if (err) return res.status(400).json({ error: 'invalid url' });
     next();
