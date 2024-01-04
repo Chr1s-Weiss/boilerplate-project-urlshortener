@@ -36,16 +36,12 @@ function validateUrl(req, res, next) {
 app.use('/api/shorturl/', validateUrl);
 
 let urlDatabase = new Map();
-
 ///api/shorturl/
 /// 1. An URL can be Postet to /api/shorturl and will be checked if it is valid
 /// 2. The URL will be saved in the database
 /// 3. The URL will be returned as a short URL with the prefix https://www.boilerplate-project-urlshortener.tecfac.at/api/shorturl/
 app.post('/api/shorturl/', (req, res) => {
   let url = req.body.url;
-  if (!url.match(/^[a-zA-Z]+:\/\//)) {
-    url = 'http://' + url;
-  }
   if(!urlDatabase.has(url)) {
     urlDatabase.set(url, urlDatabase.size + 1);
   }
@@ -57,7 +53,10 @@ app.get('/api/shorturl/:url_id', (req, res) => {
 
   if (url_id > urlDatabase.size) return res.status(404).json({ error: 'invalid url' });
   for (let [url, id] of urlDatabase) {
-    if (id == url_id) return res.status(301).redirect(url);
+    if (id == url_id) {
+      if (!url.match(/^[a-zA-Z]+:\/\//)) url = 'http://' + url;
+      return res.status(301).redirect(url);
+    }
   }
   res.status(404).json({ error: 'invalid url' });
 });
