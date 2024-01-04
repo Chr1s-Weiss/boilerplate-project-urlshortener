@@ -38,8 +38,8 @@ app.use('/api/shorturl/', validateUrl);
 let urlDatabase = new Map();
 ///api/shorturl/
 /// 1. An URL can be Postet to /api/shorturl and will be checked if it is valid
-/// 2. The URL will be saved in the database
-/// 3. The URL will be returned as a short URL with the prefix https://www.boilerplate-project-urlshortener.tecfac.at/api/shorturl/
+/// 2. The URL will be saved in the database (Map) and will be assigned a number
+/// 3. An object with the original_url and the short_url will be returned
 app.post('/api/shorturl/', (req, res) => {
   let url = req.body.url;
   if(!urlDatabase.has(url)) {
