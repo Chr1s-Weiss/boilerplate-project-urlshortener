@@ -24,7 +24,7 @@ app.get('/api/hello', function(req, res) {
 });
 
 // regex for url validation
-const urlRegex = new RegExp(/(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/);
+const urlRegex = new RegExp(/(http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/);
 
 function validateUrl(req, res, next) {
   const url = req.body.url;
