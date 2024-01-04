@@ -36,26 +36,30 @@ function validateUrl(req, res, next) {
 app.use('/api/shorturl/', validateUrl);
 
 let urlDatabase = new Map();
-const short_url_prefix = 'https://www.boilerplate-project-urlshortener.tecfac.at/api/shorturl/';
 
 ///api/shorturl/
 /// 1. An URL can be Postet to /api/shorturl and will be checked if it is valid
 /// 2. The URL will be saved in the database
 /// 3. The URL will be returned as a short URL with the prefix https://www.boilerplate-project-urlshortener.tecfac.at/api/shorturl/
 app.post('/api/shorturl/', (req, res) => {
-  if(!urlDatabase.has(req.body.url)) {
-    urlDatabase.set(req.body.url, urlDatabase.size + 1);
+  let url = req.body.url;
+  if (!url.match(/^[a-zA-Z]+:\/\//)) {
+    url = 'http://' + url;
   }
-  res.json({ original_url: req.body.url, short_url: urlDatabase.get(req.body.url) });
+  if(!urlDatabase.has(url)) {
+    urlDatabase.set(url, urlDatabase.size + 1);
+  }
+  res.json({ original_url: url, short_url: parseInt(urlDatabase.get(url)) });
 })
 
 app.get('/api/shorturl/:url_id', (req, res) => {
   const url_id = req.params.url_id;
 
-  if (url_id > urlDatabase.size) return res.status(404).json({ error: 'No short URL found for the given input' });
+  if (url_id > urlDatabase.size) return res.status(404).json({ error: 'Invalid URL' });
   for (let [url, id] of urlDatabase) {
-    if (id == url_id) res.status(301).redirect(url);
+    if (id == url_id) return res.status(301).redirect(url);
   }
+  res.status(404).json({ error: 'Invalid URL' });
 });
 
 app.listen(port, function() {
