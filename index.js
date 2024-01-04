@@ -28,7 +28,7 @@ app.get('/api/hello', function(req, res) {
 function validateUrl(req, res, next) {
   const url = req.body.url;
   dns.lookup(url, (err, address, family) => {
-    if (err) return res.status(400).json({ error: 'Invalid URL' });
+    if (err) return res.status(400).json({ error: 'invalid url' });
     next();
   });
  }
@@ -49,17 +49,17 @@ app.post('/api/shorturl/', (req, res) => {
   if(!urlDatabase.has(url)) {
     urlDatabase.set(url, urlDatabase.size + 1);
   }
-  res.json({ original_url: url, short_url: parseInt(urlDatabase.get(url)) });
+  res.json({ original_url : url, short_url : parseInt(urlDatabase.get(url)) });
 })
 
 app.get('/api/shorturl/:url_id', (req, res) => {
   const url_id = req.params.url_id;
 
-  if (url_id > urlDatabase.size) return res.status(404).json({ error: 'Invalid URL' });
+  if (url_id > urlDatabase.size) return res.status(404).json({ error: 'invalid url' });
   for (let [url, id] of urlDatabase) {
     if (id == url_id) return res.status(301).redirect(url);
   }
-  res.status(404).json({ error: 'Invalid URL' });
+  res.status(404).json({ error: 'invalid url' });
 });
 
 app.listen(port, function() {
