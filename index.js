@@ -46,7 +46,7 @@ app.post('/api/shorturl/', (req, res) => {
   if(!urlDatabase.has(req.body.url)) {
     urlDatabase.set(req.body.url, urlDatabase.size + 1);
   }
-  res.json({ original_url: req.body.url, short_url: short_url_prefix + urlDatabase.get(req.body.url) });
+  res.json({ original_url: req.body.url, short_url: urlDatabase.get(req.body.url) });
 })
 
 app.get('/api/shorturl/:url_id', (req, res) => {
